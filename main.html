@@ -26,9 +26,9 @@
       <th>Time Taken (s)</th>
     </tr>
   </thead>
-  <tbody id="tableBody">
+  <tbody id="output">
     <!-- Loading rows will be added dynamically -->
-    <tr>
+    <tr id="loading">
       <td colspan="2">Loading...</td>
     </tr>
   </tbody>
@@ -46,32 +46,36 @@
 
   const promises = [createRandomPromise(), createRandomPromise(), createRandomPromise()];
 
+  const loadingRow = document.getElementById("loading");
+
   Promise.all(promises)
     .then((results) => {
-      const tableBody = document.getElementById("tableBody");
-      tableBody.innerHTML = ""; // Clear loading rows
+      const tableBody = document.getElementById("output");
+      if (tableBody) {
+        tableBody.removeChild(loadingRow); // Remove loading row
 
-      results.forEach((time, index) => {
-        const row = document.createElement("tr");
-        const promiseCell = document.createElement("td");
-        promiseCell.textContent = `Promise ${index + 1}`;
-        const timeCell = document.createElement("td");
-        timeCell.textContent = time.toFixed(3); // Display time with 3 decimal places
-        row.appendChild(promiseCell);
-        row.appendChild(timeCell);
-        tableBody.appendChild(row);
-      });
+        results.forEach((time, index) => {
+          const row = document.createElement("tr");
+          const promiseCell = document.createElement("td");
+          promiseCell.textContent = `Promise ${index + 1}`;
+          const timeCell = document.createElement("td");
+          timeCell.textContent = time.toFixed(3); // Display time with 3 decimal places
+          row.appendChild(promiseCell);
+          row.appendChild(timeCell);
+          tableBody.appendChild(row);
+        });
 
-      // Calculate and display total time
-      const totalTime = results.reduce((acc, curr) => acc + curr, 0);
-      const totalRow = document.createElement("tr");
-      const totalCell = document.createElement("td");
-      totalCell.textContent = "Total";
-      const totalTimeCell = document.createElement("td");
-      totalTimeCell.textContent = totalTime.toFixed(3);
-      totalRow.appendChild(totalCell);
-      totalRow.appendChild(totalTimeCell);
-      tableBody.appendChild(totalRow);
+        // Calculate and display total time
+        const totalTime = results.reduce((acc, curr) => acc + curr, 0);
+        const totalRow = document.createElement("tr");
+        const totalCell = document.createElement("td");
+        totalCell.textContent = "Total";
+        const totalTimeCell = document.createElement("td");
+        totalTimeCell.textContent = totalTime.toFixed(3);
+        totalRow.appendChild(totalCell);
+        totalRow.appendChild(totalTimeCell);
+        tableBody.appendChild(totalRow);
+      }
     })
     .catch((error) => {
       console.error("Error:", error);
